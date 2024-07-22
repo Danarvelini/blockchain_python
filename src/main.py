@@ -57,7 +57,11 @@ class BlockchainNode:
         max_length = len(self.chain)
 
         for node in neighbours:
-            response = requests.get(f"http://{node}/chain", timeout=10)
+            try:
+                response = requests.get(f"http://{node}/chain", timeout=10)
+            except requests.exceptions.RequestException as e:
+                print(f"Error connecting to node {node}: {e}")
+                continue
 
             if response.status_code == 200:
                 length = response.json()["length"]
