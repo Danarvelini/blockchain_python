@@ -144,9 +144,9 @@ def resolve_conflicts():
     replaced = blockchain_node.resolve_conflicts()
 
     if replaced:
-        return jsonify({"message": "Our chain was replaced", "new_chain": blockchain_node.chain}), 200
+        return jsonify({"message": "Chain was replaced", "new_chain": blockchain_node.chain}), 200
 
-    return jsonify({"message": "Our chain is authoritative", "chain": blockchain_node.chain}), 200
+    return jsonify({"message": "Chain is ok", "chain": blockchain_node.chain}), 200
 
 
 if __name__ == "__main__":
