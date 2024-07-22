@@ -43,26 +43,44 @@ If you would like to test that public API, please update the host as specified a
 
 Here's some examples of how to use the API:
 
-### Register a new node
+### Get the current chain
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"nodes": ["http://localhost:5001"]}' <http://localhost:5000/nodes/register>
+curl --request GET \
+  --url https://blockchain-simulation-python.onrender.com/chain \
+  --header 'User-Agent: insomnia/9.3.2'
 ```
 
 ### Add a new transaction
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"origin": "Alice", "destination": "Bob", "amount": 10}' <http://localhost:5000/transactions/new>
+curl --request POST \
+  --url https://blockchain-simulation-python.onrender.com/transactions/new \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/9.3.2' \
+  --data '{
+ "origin": "Anyone",
+ "destination": "Someone",
+ "amount": 75422
+}'
+```
+
+### Register a new node
+
+```bash
+curl --request POST \
+  --url https://blockchain-simulation-python.onrender.com/nodes/register \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/9.3.2' \
+  --data '{
+ "nodes": "127.0.0.1"
+}'
 ```
 
 ### Mine a new block
 
 ```bash
-curl -X GET <http://localhost:5000/mine>
-```
-
-### Get the current chain
-
-```bash
-curl -X GET <http://localhost:5000/chain>
+curl --request GET \
+  --url https://blockchain-simulation-python.onrender.com/mine \
+  --header 'User-Agent: insomnia/9.3.2'
 ```
