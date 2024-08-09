@@ -33,9 +33,9 @@ Repository created with the intention to simulate a blockchain with Transactions
     - `/nodes/register`: Register a new node
     - `/nodes/resolve`: Resolve conflicts with other nodes
 
-### API Public
+### API Public (Disabled for now)
 
-I made this API publicly available using this host: <https://blockchain-simulation-python.onrender.com>
+I made this API publicly available using this host: <https://blockchain-simulation-python.onrender.com> 
 
 If you would like to test that public API, please update the host as specified above.
 
