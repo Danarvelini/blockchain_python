@@ -10,20 +10,23 @@ import requests
 class BlockchainNode:
     def __init__(self, node_id, chain=[]):
         self.node_id = node_id
-        self.chain = chain
-        self.pending_transactions = []
+        self.chain = chain # List to store the blockchain
+        self.pending_transactions = [] # List for transactions waiting to be mined into a block
         self.nodes = set()
 
-        self.new_block(proof=99, previous_hash=9999)
+        self.new_block(proof=99, previous_hash=9999) # Genesis block
 
     @staticmethod
     def hash_block(block):
-        block_string = json.dumps(block, sort_keys=True).encode()
+        """Creates a SHA3-256 hash of a block. It uses json.dumps with sort_keys=True to ensure consistency in hashng"""
 
+        block_string = json.dumps(block, sort_keys=True).encode()
         return sha3_256(block_string).hexdigest()
 
     @staticmethod
     def valid_proof(last_proof, proof):
+        """Checks if a proof of work is valid. The proof is valid if the hash of the concatenation of last_proof and proof starts with four zeros"""
+
         guess = f"{last_proof}{proof}".encode()
         guess_hash = sha3_256(guess).hexdigest()
 
@@ -31,7 +34,7 @@ class BlockchainNode:
 
     def register_node(self, address):
         parsed_url = urlparse(address)
-        self.nodes.add(parsed_url.netloc)
+        self.nodes.add(parsed_url.netloc) # Includes the domain name and port number
 
     def valid_chain(self, chain):
         last_block = chain[0]
@@ -93,21 +96,27 @@ class BlockchainNode:
     def new_transaction(self, origin, destination, amount):
         self.pending_transactions.append({"origin": origin, "destination": destination, "amount": amount})
 
+###############################################################################################################################
+###############################################################################################################################
 
 app = Flask(__name__)
 
 node_id = str(uuid4()).replace("-", "")
 blockchain_node = BlockchainNode(node_id)
 
+###############################################################################################################################
+###############################################################################################################################
 
 @app.route("/chain", methods=["GET"])
 def get_chain():
+    """Fetch the current blockchain and its length."""
     response = {"chain": blockchain_node.chain, "length": len(blockchain_node.chain)}
     return jsonify(response), 200
 
 
 @app.route("/transactions/new", methods=["POST"])
 def new_transaction():
+    """Add a new transaction to the blockchain."""
     values = request.get_json()
 
     if "origin" in values and "destination" in values and "amount" in values:
@@ -119,6 +128,7 @@ def new_transaction():
 
 @app.route("/mine", methods=["GET"])
 def mine():
+    """Mine a new block and add it to the blockchain."""
     last_block = blockchain_node.chain[-1]
     last_proof = last_block["proof"]
     proof = blockchain_node.valid_proof(last_proof, 0)
@@ -132,6 +142,7 @@ def mine():
 
 @app.route("/nodes/register", methods=["POST"])
 def register_node():
+    """Register one or more new nodes within the network."""
     values = request.get_json()
 
     if "nodes" in values:
@@ -145,6 +156,7 @@ def register_node():
 
 @app.route("/nodes/resolve", methods=["GET"])
 def resolve_conflicts():
+    """Check and resolve any conflicts in the blockchain by comparing with other nodes."""
     replaced = blockchain_node.resolve_conflicts()
 
     if replaced:
